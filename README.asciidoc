@@ -9,3 +9,14 @@ http://of-vim-and-vigor.blogspot.com/[beverages].
 
 LOTR displays a persistent view of your :registers in Vim in a sidebar window.
 
+== Commands
+
+* `:LOTROpen`
+* `:LOTRClose`
+* `:LOTRToggle` also available through `<PLUG>LOTRToggle` which is mapped to `<leader>cr` by default.
+
+== Within the LOTR window:
+
+* `q` closes the LOTR window
+* `<space>` toggles zoom mode
+* `<cr>` returns to the prior window

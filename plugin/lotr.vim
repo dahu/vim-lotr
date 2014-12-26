@@ -48,15 +48,7 @@ if !exists('g:lotr_left')
 endif
 
 if !exists('g:lotr_width')
-  let g:lotr_width = 20
-endif
-
-if !exists('g:lotr_compact')
-    let g:lotr_compact = 0
-endif
-
-if !exists('g:lotr_minify')
-    let g:lotr_minify = 1
+  let g:lotr_width = 25
 endif
 
 if !exists('g:lotr_expand')
@@ -67,9 +59,7 @@ let s:autocommands_done        = 0
 let s:source_autocommands_done = 0
 let s:window_expanded          = 0
 
-
-" local data structure for registers
-
+" Registers {{{2
 function! LOTR_Regs()
   let core_regs = ['*', '+', '-', '"']
   let regs = {}
@@ -80,59 +70,35 @@ function! LOTR_Regs()
   endfor
 
   for reg in extend(range(10), core_regs)
-    call add(reglist, reg . ' ' . s:MinifyText(substitute(regs[reg], '\n', '^J', 'g')))
+    call add(reglist, reg . ' ' . substitute(regs[reg], '\n', '^J', 'g'))
   endfor
 
   for regn in range(26)
     let reg = nr2char(char2nr('a') + regn)
     if (has_key(regs, reg)) && (regs[reg] != '')
-      call add(reglist, reg . ' ' . s:MinifyText(substitute(regs[reg], '\n', '^J', 'g')))
+      call add(reglist, reg . ' ' . substitute(regs[reg], '\n', '^J', 'g'))
     endif
   endfor
 
   return reglist
 endfunction
 
-function! s:MinifyText(text)
-  if g:lotr_minify
-    return strpart(a:text, 0, (&columns - 3))
-  else
-    return a:text
-  endif
-endfunction
-
 function! s:CreateAutocommands() "{{{2
   augroup LOTR_AutoCmds
     autocmd!
-    autocmd BufEnter    __LOTR__  nested call s:QuitIfOnlyWindow()
-    autocmd BufUnload   __LOTR__         call s:CleanUp()
-    " autocmd CursorMoved __LOTR__         call s:AutoUpdate()
+    autocmd BufEnter               __LOTR__  nested call s:QuitIfOnlyWindow()
+    autocmd BufUnload              __LOTR__         call s:CleanUp()
+    autocmd CursorHold,CursorMoved *                call s:AutoUpdate()
   augroup END
 
   let s:autocommands_done = 1
 endfunction
 
-function! s:CreateSourceAutocommands() "{{{2
-  augroup LOTR_SourceAutoCmds
-    autocmd!
-    autocmd CursorMoved <buffer> call s:SourceAutoUpdate()
-  augroup END
-  let s:source_autocommands_done = 1
-endfunction
-
-
 function! s:MapKeys() "{{{2
-  nnoremap <script> <silent> <buffer> <CR> :wincmd p<cr>
-  nnoremap <script> <silent> <buffer> m    :call <SID>ToggleMinify()<CR>
-  nnoremap <script> <silent> <buffer> q    :call <SID>CloseWindow()<CR>
+  nnoremap <script> <silent> <buffer> <CR>    :wincmd p<cr>
+  nnoremap <script> <silent> <buffer> <space> :call <SID>ZoomWindow()<CR>
+  nnoremap <script> <silent> <buffer> q       :call <SID>CloseWindow()<CR>
 endfunction
-
-" TODO: Currently only reflects toggle after leaving & entering LOTR window
-function! s:ToggleMinify()
-  let g:lotr_minify = !g:lotr_minify
-  call s:RenderContent()
-endfunction
-
 
 " Window management {{{1
 " Window management code shamelessly stolen from the Tagbar plugin:
@@ -142,46 +108,36 @@ function! s:ToggleWindow() "{{{2
   let lotr_winnr = bufwinnr("__LOTR__")
   if lotr_winnr != -1
     call s:CloseWindow()
-    return
+  else
+    call s:OpenWindow()
   endif
-
-  call s:OpenWindow(0)
 endfunction
 
-
-function! s:OpenWindow(autoclose) "{{{2
+function! s:OpenWindow() "{{{2
   " If the LOTR window is already open jump to it
   let lotr_winnr = bufwinnr('__LOTR__')
   if lotr_winnr != -1
     if winnr() != lotr_winnr
-      let s:lotr_regs = LOTR_Regs()
       execute lotr_winnr . 'wincmd w'
     endif
     return
-  else
-    let s:lotr_regs = LOTR_Regs()
   endif
+  let s:lotr_regs = LOTR_Regs()
 
   " Expand the Vim window to accomodate for the LOTR window if requested
-  if g:lotr__expand && !s:window_expanded && has('gui_running')
-    let &columns += g:lotr__width + 1
+  if g:lotr_expand && !s:window_expanded && has('gui_running')
+    let &columns += g:lotr_width + 1
     let s:window_expanded = 1
   endif
 
-  let openpos = g:lotr__left ? 'topleft vertical ' : 'botright vertical '
-  exe 'silent keepalt ' . openpos . g:lotr__width . 'split ' . '__LOTR__'
-  call s:InitWindow(a:autoclose)
+  let openpos = g:lotr_left ? 'topleft vertical ' : 'botright vertical '
+  exe 'silent keepalt ' . openpos . g:lotr_width . 'split ' . '__LOTR__'
+  call s:InitWindow()
 
   execute 'wincmd p'
-
-  " TODO: need a better name for this, or a better way to do it
-  if !s:source_autocommands_done
-    call s:CreateSourceAutocommands()
-  endif
 endfunction
 
-
-function! s:InitWindow(autoclose) "{{{2
+function! s:InitWindow() "{{{2
   setlocal noreadonly " in case the "view" mode is used
   setlocal buftype=nofile
   setlocal bufhidden=hide
@@ -207,13 +163,12 @@ function! s:InitWindow(autoclose) "{{{2
   setlocal foldmethod&
   setlocal foldexpr&
 
+  " XXX:
   " Script-local variable needed since compare functions can't
   " take extra arguments
-  let s:compare_typeinfo = {}
+  " let s:compare_typeinfo = {}
 
   let s:is_maximized = 0
-
-  let w:autoclose = a:autoclose
 
   let cpoptions_save = &cpoptions
   set cpoptions&vim
@@ -225,6 +180,8 @@ function! s:InitWindow(autoclose) "{{{2
   if !s:autocommands_done
     call s:CreateAutocommands()
   endif
+
+  setlocal statusline=[LOTR]\ Registers
 
   call s:RenderContent()
 
@@ -267,7 +224,7 @@ function! s:CloseWindow() "{{{2
     endfor
 
     if index(tablist, lotr_bufnr) == -1
-      let &columns -= g:lotr__width + 1
+      let &columns -= g:lotr_width + 1
       let s:window_expanded = 0
     endif
   endif
@@ -282,7 +239,6 @@ function! s:ZoomWindow() "{{{2
     let s:is_maximized = 1
   endif
 endfunction
-
 
 " Display {{{1
 function! s:RenderContent() "{{{2
@@ -330,16 +286,13 @@ endfunction
 
 " Helper Functions {{{1
 
-" s:CleanUp() {{{2
-function! s:CleanUp()
-  silent autocmd! LOTRAutoCmds
-
+function! s:CleanUp() "{{{2
+  silent autocmd! LOTR_AutoCmds
   unlet s:is_maximized
-  unlet s:compare_typeinfo
+  " unlet s:compare_typeinfo
 endfunction
 
-" s:QuitIfOnlyWindow() {{{2
-function! s:QuitIfOnlyWindow()
+function! s:QuitIfOnlyWindow() "{{{2
   " Before quitting Vim, delete the LOTR buffer so that
   " the '0 mark is correctly set to the previous buffer.
   if winbufnr(2) == -1
@@ -359,37 +312,20 @@ function! s:AutoUpdate() " {{{2
   if lotr_winnr == -1
     return
   endif
-  if &filetype == 'lotr'
-    let line = getline('.')
-    let line_num = matchstr(line, ' \zs\d\+')
-    wincmd p
-    exe 'normal ' . line_num . 'Gzz'
-    redraw
-    wincmd p
-  else
-    call s:RenderContent()
-  endif
-endfunction
-
-function! s:SourceAutoUpdate() "{{{2
-  " Don't do anything if LOTR is not open or if we're in the LOTR window
-  let lotr_winnr = bufwinnr('__LOTR__')
-  if lotr_winnr == -1 || &filetype == 'lotr_'
-    return
-  endif
-
   call s:RenderContent()
 endfunction
 
 " Maps {{{1
-nnoremap <leader>cr :LOTRToggle<CR>:wincmd p<CR>
+nnoremap <plug>LOTRToggle :LOTRToggle<cr>
+
+if ! hasmapto('<plug>LOTRToggle')
+  nmap <leader>cr <plug>LOTRToggle
+endif
 
 " Commands {{{1
-command! -nargs=0 LOTRToggle        call s:ToggleWindow()
-command! -nargs=0 LOTROpen          call s:OpenWindow(0)
-command! -nargs=0 LOTROpenAutoClose call s:OpenWindow(1)
-command! -nargs=0 LOTRClose         call s:CloseWindow()
+command! -bar -nargs=0 LOTRToggle        call s:ToggleWindow()
+command! -bar -nargs=0 LOTROpen          call s:OpenWindow()
+command! -bar -nargs=0 LOTRClose         call s:CloseWindow()
 
 " Modeline {{{1
 " vim: ts=8 sw=2 sts=2 et foldenable foldmethod=marker foldcolumn=1
-
