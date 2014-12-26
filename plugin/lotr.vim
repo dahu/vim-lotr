@@ -122,12 +122,9 @@ function! s:ToggleWindow() "{{{2
 endfunction
 
 function! s:OpenWindow() "{{{2
-  " If the LOTR window is already open jump to it
+  " do nothing if the LOTR window is already open 
   let lotr_winnr = bufwinnr('__LOTR__')
   if lotr_winnr != -1
-    if winnr() != lotr_winnr
-      execute lotr_winnr . 'wincmd w'
-    endif
     return
   endif
   let s:lotr_regs = LOTR_Regs()
@@ -141,7 +138,7 @@ function! s:OpenWindow() "{{{2
   let openpos = g:lotr_left ? 'topleft vertical ' : 'botright vertical '
   exe 'silent keepalt ' . openpos . g:lotr_width . 'split ' . '__LOTR__'
   call s:InitWindow()
-  execute 'wincmd p'
+  wincmd p
 endfunction
 
 function! s:InitWindow() "{{{2
