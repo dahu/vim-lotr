@@ -61,7 +61,7 @@ let s:window_expanded          = 0
 
 " Registers {{{2
 function! LOTR_Regs()
-  let core_regs = ['*', '+', '-', '"']
+  let core_regs = ['"', '-', '*', '+']
   let regs = {}
   let reglist = []
 
@@ -69,9 +69,17 @@ function! LOTR_Regs()
     call extend(regs, {reg : getreg(reg)})
   endfor
 
-  for reg in extend(range(10), core_regs)
+  for reg in core_regs
     call add(reglist, reg . ' ' . substitute(regs[reg], '\n', '^J', 'g'))
   endfor
+
+  call add(reglist, '')
+
+  for reg in range(10)
+    call add(reglist, reg . ' ' . substitute(regs[reg], '\n', '^J', 'g'))
+  endfor
+
+  call add(reglist, '')
 
   for regn in range(26)
     let reg = nr2char(char2nr('a') + regn)
@@ -133,7 +141,6 @@ function! s:OpenWindow() "{{{2
   let openpos = g:lotr_left ? 'topleft vertical ' : 'botright vertical '
   exe 'silent keepalt ' . openpos . g:lotr_width . 'split ' . '__LOTR__'
   call s:InitWindow()
-
   execute 'wincmd p'
 endfunction
 
@@ -163,11 +170,6 @@ function! s:InitWindow() "{{{2
   setlocal foldmethod&
   setlocal foldexpr&
 
-  " XXX:
-  " Script-local variable needed since compare functions can't
-  " take extra arguments
-  " let s:compare_typeinfo = {}
-
   let s:is_maximized = 0
 
   let cpoptions_save = &cpoptions
@@ -181,7 +183,7 @@ function! s:InitWindow() "{{{2
     call s:CreateAutocommands()
   endif
 
-  setlocal statusline=[LOTR]\ Registers
+  setlocal statusline=\ [LOTR]
 
   call s:RenderContent()
 

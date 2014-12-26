@@ -1,13 +1,13 @@
 LOTR
 ----
 
-__Lord of the Registers__
+__Lord of the Regs__
 
 TIP: If you like vim-lotr and want to share the W00t!, I'm grateful for
 https://www.gittip.com/bairuidahu/[tips] or
 http://of-vim-and-vigor.blogspot.com/[beverages].
 
-LOTR displays a persistent view of your :registers in Vim in a sidebar window.
+LOTR displays a persistent view of your Vim `:registers` in a sidebar window.
 
 == Commands
 

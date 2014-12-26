@@ -1,0 +1,80 @@
+*lotr.txt*	Lord of the Regs
+
+
+			VIM REFERENCE MANUAL	by Barry Arthur
+
+
+Help on using lotr                                                    *lotr*
+
+1. Introduction				|lotr-intro|
+2. Configuration			|lotr-configuration|
+3. Commands				|lotr-commands|
+4. LOTR Window Commands			|lotr-window-commands|
+
+==============================================================================
+ 1. INTRODUCTION                                                  *lotr-intro*
+
+LOTR -- Lord of the Regs -- A persistent view of :registers in a sidebar window.
+
+==============================================================================
+ 2. CONFIGURATION                                         *lotr-configuration*
+
+These options can be set in your |$MYVIMRC| to modify the behaviour of LOTR:
+
+|'lotr_left'|		Position the LOTR window to the left
+|'lotr_width'|		Width of the LOTR window
+|'lotr_expand'|		Force GVim to widen if necessary to accommodate LOTR
+
+------------------------------------------------------------------------------
+                                                                 *'lotr_left'*
+Values: boolean                                                              ~
+Default: 0                                                                   ~
+
+By default LOTR opens to the right. Setting this to 1 will open it to the left.
+
+------------------------------------------------------------------------------
+                                                                *'lotr_width'*
+Values: number                                                               ~
+Default: 25                                                                  ~
+
+By default the LOTR window is 25 characters wide.
+
+------------------------------------------------------------------------------
+                                                               *'lotr_expand'*
+Values: boolean                                                              ~
+Default: 0                                                                   ~
+
+By default the LOTR window will not cause GVim to resize to accommodate it.
+
+==============================================================================
+ 3. COMMANDS                                                   *lotr-commands*
+
+The following commands are available:
+
+`:LOTROpen`	Open the LOTR window
+
+`:LOTRClose`	Close the LOTR window
+
+`:LOTRToggle`	Toggle the open/close state of the LOTR window
+
+
+The `:LOTRToggle` command is also available through `<PLUG>LOTRToggle`
+which is mapped to `<leader>cr` by default. You can change this by
+adding a line like this to your |$MYVIMRC|:
+>
+  nmap <leader>r <plug>LOTRToggle
+<
+
+
+==============================================================================
+ 3. LOTR WINDOW COMMANDS                                *lotr-window-commands*
+
+From within the LOTR window:
+
+`<Enter>`	Jumps back to the prior window (|wincmd| p)
+`<Space>`	Toggles zoom mode
+`q`		Closes the LOTR window
+
+
+Template From: https://github.com/dahu/Area-41/
+ vim:tw=78:ts=8:ft=help:norl:
