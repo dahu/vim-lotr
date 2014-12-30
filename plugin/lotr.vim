@@ -122,7 +122,7 @@ function! s:ToggleWindow() "{{{2
 endfunction
 
 function! s:OpenWindow() "{{{2
-  " do nothing if the LOTR window is already open 
+  " do nothing if the LOTR window is already open
   let lotr_winnr = bufwinnr('__LOTR__')
   if lotr_winnr != -1
     return
@@ -243,6 +243,9 @@ endfunction
 function! s:RenderContent() "{{{2
   " only update the LOTR window if we're in normal mode
   if mode(1) != 'n'
+    return
+  endif
+  if getcmdwintype() != ""
     return
   endif
   let lotr_winnr = bufwinnr('__LOTR__')
