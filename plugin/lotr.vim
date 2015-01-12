@@ -26,8 +26,9 @@ endif
 
 " Basic init {{{2
 
-if v:version < 700
-  echomsg 'LOTR: Vim version is too old, LOTR requires at least 7.0'
+if v:version < 704
+      \ || v:version == 704 && !has('patch392')
+  echomsg 'LOTR: Vim version is too old, LOTR requires at least 7.4, patch 392'
   finish
 endif
 
