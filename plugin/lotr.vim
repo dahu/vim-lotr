@@ -48,6 +48,10 @@ if !exists('g:lotr_left')
   let g:lotr_left = 0
 endif
 
+if !exists('g:lotr_position')
+  let g:lotr_position = g:lotr_left ? 'left' : 'right'
+endif
+
 if !exists('g:lotr_width')
   let g:lotr_width = 25
 endif
@@ -136,8 +140,11 @@ function! s:OpenWindow() "{{{2
     let s:window_expanded = 1
   endif
 
-  let openpos = g:lotr_left ? 'topleft vertical ' : 'botright vertical '
-  exe 'silent keepalt ' . openpos . g:lotr_width . 'split ' . '__LOTR__'
+  let openpos = {
+        \ 'top'    : 'topleft',  'left'  : 'topleft vertical',
+        \ 'bottom' : 'botright', 'right' : 'botright vertical'}
+        \[g:lotr_position] . ' '
+  exe 'silent keepalt ' . openpos . g:lotr_width . ' split ' . '__LOTR__'
   call s:InitWindow()
   wincmd p
 endfunction
