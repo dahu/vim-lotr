@@ -336,7 +336,7 @@ function! s:IsWindowValidToSplit() " {{{2
   " Returns 1 if we should proceed to open LOTR window.
   " TODO: if we are in the command or some other invalid window,
   " first move to a 'good' window for the splitting?
-  if exists("getcmdwintype") && getcmdwintype() != ""
+  if exists("*getcmdwintype") && getcmdwintype() != ""
     echomsg "Cannot open LOTR from the command window"
     return 0
   elseif bufname('%') == "[Command Line]"
