@@ -26,9 +26,13 @@ endif
 
 " Basic init {{{2
 
-if v:version < 704
-      \ || v:version == 704 && !has('patch392')
-  echomsg 'LOTR: Vim version is too old, LOTR requires at least 7.4, patch 392'
+" if v:version < 704
+"       \ || v:version == 704 && !has('patch392')
+"   echomsg 'LOTR: Vim version is too old, LOTR requires at least 7.4, patch 392'
+"   finish
+" endif
+if v:version < 702
+  echomsg 'LOTR: Vim version is too old, LOTR requires at least 7.3'
   finish
 endif
 
@@ -130,6 +134,9 @@ function! s:OpenWindow() "{{{2
   " do nothing if the LOTR window is already open
   let lotr_winnr = bufwinnr('__LOTR__')
   if lotr_winnr != -1
+    return
+  endif
+  if !s:IsWindowValidToSplit()
     return
   endif
   let s:lotr_regs = LOTR_Regs()
@@ -253,7 +260,7 @@ function! s:RenderContent() "{{{2
   if mode(1) != 'n'
     return
   endif
-  if getcmdwintype() != ""
+  if !s:IsWindowValidToSplit()
     return
   endif
   let lotr_winnr = bufwinnr('__LOTR__')
@@ -323,6 +330,20 @@ function! s:AutoUpdate() " {{{2
     return
   endif
   call s:RenderContent()
+endfunction
+function! s:IsWindowValidToSplit() " {{{2
+  " Error if we try to split command window
+  " Returns 1 if we should proceed to open LOTR window.
+  " TODO: if we are in the command or some other invalid window,
+  " first move to a 'good' window for the splitting?
+  if exists("*getcmdwintype") && getcmdwintype() != ""
+    echomsg "Cannot open LOTR from the command window"
+    return 0
+  elseif bufname('%') == "[Command Line]"
+    echomsg "Cannot open LOTR from the command window"
+    return 0
+  endif
+  return 1
 endfunction
 
 " Maps {{{1
