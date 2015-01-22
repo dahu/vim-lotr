@@ -245,12 +245,22 @@ function! s:CloseWindow() "{{{2
 endfunction
 
 function! s:ZoomWindow() "{{{2
-  if s:is_maximized
-    execute 'vert resize ' . g:lotr_width
-    let s:is_maximized = 0
+  if g:lotr_position == 'top' || g:lotr_position == 'bottom'
+    if s:is_maximized
+      execute 'resize ' . g:lotr_width
+      let s:is_maximized = 0
+    else
+      resize
+      let s:is_maximized = 1
+    endif
   else
-    vert resize
-    let s:is_maximized = 1
+    if s:is_maximized
+      execute 'vert resize ' . g:lotr_width
+      let s:is_maximized = 0
+    else
+      vert resize
+      let s:is_maximized = 1
+    endif
   endif
 endfunction
 
