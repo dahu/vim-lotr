@@ -68,6 +68,10 @@ if !exists('g:lotr_expand')
   let g:lotr_expand = 0
 endif
 
+if !exists('g:lotr_focus_on_open')
+  let g:lotr_focus_on_open = 0
+endif
+
 let s:autocommands_done        = 0
 let s:source_autocommands_done = 0
 let s:window_expanded          = 0
@@ -157,7 +161,9 @@ function! s:OpenWindow() "{{{2
         \[g:lotr_position] . ' '
   exe 'silent keepalt ' . openpos . g:lotr_winsize . ' split ' . '__LOTR__'
   call s:InitWindow()
-  wincmd p
+  if !g:lotr_focus_on_open
+    wincmd p
+  endif
 endfunction
 
 function! s:InitWindow() "{{{2
