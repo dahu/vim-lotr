@@ -57,7 +57,11 @@ if !exists('g:lotr_position')
 endif
 
 if !exists('g:lotr_width')
-  let g:lotr_width = 25
+  let g:lotr_width = 0
+endif
+
+if !exists('g:lotr_winsize')
+  let g:lotr_winsize = g:lotr_width ? g:lotr_width : 25
 endif
 
 if !exists('g:lotr_expand')
@@ -143,7 +147,7 @@ function! s:OpenWindow() "{{{2
 
   " Expand the Vim window to accomodate for the LOTR window if requested
   if g:lotr_expand && !s:window_expanded && has('gui_running')
-    let &columns += g:lotr_width + 1
+    let &columns += g:lotr_winsize + 1
     let s:window_expanded = 1
   endif
 
@@ -151,7 +155,7 @@ function! s:OpenWindow() "{{{2
         \ 'top'    : 'topleft',  'left'  : 'topleft vertical',
         \ 'bottom' : 'botright', 'right' : 'botright vertical'}
         \[g:lotr_position] . ' '
-  exe 'silent keepalt ' . openpos . g:lotr_width . ' split ' . '__LOTR__'
+  exe 'silent keepalt ' . openpos . g:lotr_winsize . ' split ' . '__LOTR__'
   call s:InitWindow()
   wincmd p
 endfunction
@@ -238,7 +242,7 @@ function! s:CloseWindow() "{{{2
     endfor
 
     if index(tablist, lotr_bufnr) == -1
-      let &columns -= g:lotr_width + 1
+      let &columns -= g:lotr_winsize + 1
       let s:window_expanded = 0
     endif
   endif
@@ -247,7 +251,7 @@ endfunction
 function! s:ZoomWindow() "{{{2
   if g:lotr_position == 'top' || g:lotr_position == 'bottom'
     if s:is_maximized
-      execute 'resize ' . g:lotr_width
+      execute 'resize ' . g:lotr_winsize
       let s:is_maximized = 0
     else
       resize
@@ -255,7 +259,7 @@ function! s:ZoomWindow() "{{{2
     endif
   else
     if s:is_maximized
-      execute 'vert resize ' . g:lotr_width
+      execute 'vert resize ' . g:lotr_winsize
       let s:is_maximized = 0
     else
       vert resize
