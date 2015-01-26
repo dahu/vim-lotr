@@ -22,7 +22,7 @@ endif
 let s:save_cpo = &cpo
 set cpo&vim
 
-syn match lotrRegSpecial  "^[-"*+]"
+syn match lotrRegSpecial  "^[-"*+/]"
 syn match lotrRegNumbered "^[0-9]"
 syn match lotrRegLettered "^[a-z]"
 syn match lotrNewline     "\^J"

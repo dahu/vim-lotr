@@ -78,7 +78,7 @@ let s:window_expanded          = 0
 
 " Registers {{{2
 function! LOTR_Regs()
-  let core_regs = ['"', '-', '*', '+']
+  let core_regs = ['"', '-', '*', '+', '/']
   let regs = {}
   let reglist = []
 
