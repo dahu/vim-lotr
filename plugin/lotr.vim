@@ -1,10 +1,9 @@
 "" ============================================================================
-" File:        lotr-view.vim
+" File:        lotr.vim
 " Description: A persistent view of :registers in Vim
 " Authors:     Barry Arthur <barry.arthur@gmail.com>
 " Licence:     Vim licence
 " Website:     http://dahu.github.com/vim-lotr/
-" Version:     0.1
 " Note:        This plugin was heavily inspired by the 'Tagbar' plugin by
 "              Jan Larres and uses great gobs of code from it.
 "
@@ -26,25 +25,10 @@ endif
 
 " Basic init {{{2
 
-" if v:version < 704
-"       \ || v:version == 704 && !has('patch392')
-"   echomsg 'LOTR: Vim version is too old, LOTR requires at least 7.4, patch 392'
-"   finish
-" endif
 if v:version < 702
-  echomsg 'LOTR: Vim version is too old, LOTR requires at least 7.3'
+  echomsg 'LOTR: Vim version is too old, LOTR requires at least 7.2'
   finish
 endif
-
-redir => s:ftype_out
-silent filetype
-redir END
-if s:ftype_out !~# 'detection:ON'
-  echomsg 'LOTR: Filetype detection is turned off, skipping plugin'
-  unlet s:ftype_out
-  finish
-endif
-unlet s:ftype_out
 
 let g:loaded_lotr = 1
 
@@ -70,6 +54,10 @@ endif
 
 if !exists('g:lotr_focus_on_open')
   let g:lotr_focus_on_open = 0
+endif
+
+if !exists('g:lotr_yankstack')
+  let g:lotr_yankstack = 1
 endif
 
 let s:autocommands_done        = 0
@@ -104,6 +92,19 @@ function! LOTR_Regs()
       call add(reglist, reg . ' ' . substitute(regs[reg], '\n', '^J', 'g'))
     endif
   endfor
+
+  if g:lotr_yankstack && exists(':Yanks')
+    redir => yankstack_regs
+    silent! Yanks
+    redir END
+
+    call add(reglist, '')
+
+    for regline in split(yankstack_regs, "\n")[1:]
+      let [reg; text] = matchlist(regline, '\(^\d\+\)\%(\s\+\(.*\)\)\?')[1:2]
+      call add(reglist, printf("%2d", reg) . ' ' . substitute(text[0], '\n', '^J', 'g'))
+    endfor
+  endif
 
   return reglist
 endfunction
@@ -349,8 +350,11 @@ function! s:AutoUpdate() " {{{2
   if lotr_winnr == -1
     return
   endif
+  let pos = getpos('.')
   call s:RenderContent()
+  call setpos('.', pos)
 endfunction
+
 function! s:IsWindowValidToSplit() " {{{2
   " Error if we try to split command window
   " Returns 1 if we should proceed to open LOTR window.

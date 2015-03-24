@@ -21,23 +21,20 @@ LOTR -- Lord of the Regs -- A persistent view of :registers in a sidebar window.
 
 These options can be set in your |$MYVIMRC| to modify the behaviour of LOTR:
 
-|'lotr_left'|		Position the LOTR window to the left
-|'lotr_width'|		Width of the LOTR window
+|'lotr_position'|	Position the LOTR window (left, right, top, bottom)
+|'lotr_winsize'|	Width or height of the LOTR window
 |'lotr_expand'|		Force GVim to widen if necessary to accommodate LOTR
+|'lotr_yankstack'|	Show the :Yanks list from the YankStack plugin
 
 ------------------------------------------------------------------------------
-                                                                 *'lotr_left'*
-Values: boolean                                                              ~
-Default: 0                                                                   ~
-
-By default LOTR opens to the right. Setting this to 1 will open it to the left.
+                                                             *'lotr_position'*
+Values: string (left, right, top, bottom)                                    ~
+Default: right                                                               ~
 
 ------------------------------------------------------------------------------
-                                                                *'lotr_width'*
+                                                              *'lotr_winsize'*
 Values: number                                                               ~
 Default: 25                                                                  ~
-
-By default the LOTR window is 25 characters wide.
 
 ------------------------------------------------------------------------------
                                                                *'lotr_expand'*
@@ -45,6 +42,20 @@ Values: boolean                                                              ~
 Default: 0                                                                   ~
 
 By default the LOTR window will not cause GVim to resize to accommodate it.
+
+------------------------------------------------------------------------------
+                                                        *'lotr_focus_on_open'*
+Values: boolean                                                              ~
+Default: 0                                                                   ~
+
+By default the LOTR window will not take focus when opened.
+
+------------------------------------------------------------------------------
+                                                            *'lotr_yankstack'*
+Values: boolean                                                              ~
+Default: 1                                                                   ~
+
+If installed, LOTR will show the YankStack list as shown by the :Yanks command.
 
 ==============================================================================
  3. COMMANDS                                                   *lotr-commands*
@@ -67,7 +78,7 @@ adding a line like this to your |$MYVIMRC|:
 
 
 ==============================================================================
- 3. LOTR WINDOW COMMANDS                                *lotr-window-commands*
+ 4. LOTR WINDOW COMMANDS                                *lotr-window-commands*
 
 From within the LOTR window:
 

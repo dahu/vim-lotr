@@ -25,11 +25,13 @@ set cpo&vim
 syn match lotrRegSpecial  "^[-"*+/]"
 syn match lotrRegNumbered "^[0-9]"
 syn match lotrRegLettered "^[a-z]"
+syn match lotrYankStacked "^ [0-9]\|^[1-9][0-9]\+"
 syn match lotrNewline     "\^J"
 
 hi def link lotrRegSpecial	Constant
 hi def link lotrRegNumbered	Special
 hi def link lotrRegLettered	Identifier
+hi def link lotrYankStacked	Function
 hi def link lotrNewline		NonText
 
 let b:current_syntax = "lotr"

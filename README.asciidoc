@@ -20,3 +20,11 @@ LOTR displays a persistent view of your Vim `:registers` in a sidebar window.
 * `q` closes the LOTR window
 * `<space>` toggles zoom mode
 * `<cr>` returns to the prior window
+
+== YankStack
+
+LOTR now shows the :Yanks list from the YankStack plugin. +
+Disable this by adding this line to your `~/.vimrc`:
+
+  let g:lotr_yankstack = 0
+
