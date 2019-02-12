@@ -51,6 +51,13 @@ Default: 0                                                                   ~
 By default the LOTR window will not take focus when opened.
 
 ------------------------------------------------------------------------------
+                                                             *'lotr_map_keys'*
+Values: boolean                                                              ~
+Default: 1                                                                   ~
+
+By default LOTR will add key maps.
+
+------------------------------------------------------------------------------
                                                             *'lotr_yankstack'*
 Values: boolean                                                              ~
 Default: 1                                                                   ~
@@ -70,8 +77,9 @@ The following commands are available:
 
 
 The `:LOTRToggle` command is also available through `<PLUG>LOTRToggle`
-which is mapped to `<leader>cr` by default. You can change this by
-adding a line like this to your |$MYVIMRC|:
+which is mapped to `<leader>cr` by default. If `g:lotr_map_keys` is set
+to 0 then the map will not be added. You can change this by adding a line
+like this to your |$MYVIMRC|:
 >
   nmap <leader>r <plug>LOTRToggle
 <
