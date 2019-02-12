@@ -56,6 +56,10 @@ if !exists('g:lotr_focus_on_open')
   let g:lotr_focus_on_open = 0
 endif
 
+if !exists('g:lotr_map_keys')
+  let g:lotr_map_keys = 1
+endif
+
 if !exists('g:lotr_yankstack')
   let g:lotr_yankstack = 1
 endif
@@ -373,7 +377,7 @@ endfunction
 " Maps {{{1
 nnoremap <plug>LOTRToggle :LOTRToggle<cr>
 
-if ! hasmapto('<plug>LOTRToggle')
+if g:lotr_map_keys && ! hasmapto('<plug>LOTRToggle')
   nmap <leader>cr <plug>LOTRToggle
 endif
 
